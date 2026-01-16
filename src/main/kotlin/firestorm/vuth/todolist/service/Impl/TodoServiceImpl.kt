@@ -4,14 +4,22 @@ import firestorm.vuth.todolist.exception.TodoNotFoundException
 import firestorm.vuth.todolist.model.Todo
 import firestorm.vuth.todolist.repository.TodoRepo
 import firestorm.vuth.todolist.service.TodoService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
+import java.awt.print.Pageable
 
 @Service
 class TodoServiceImpl(
     private val todoRepo: TodoRepo
 ): TodoService {
-    override fun findAll(): List<Todo> =
-        todoRepo.findAll()
+    override fun findAll(
+        page: Int,
+        limit: Int
+    ): Page<Todo> {
+        val pageable: PageRequest = PageRequest.of(page -1, limit)
+        return todoRepo.findAll(pageable)
+    }
 
     override fun findById(id: Long): Todo =
         todoRepo.findById(id).orElseThrow { TodoNotFoundException("Cannot find todo with id $id") }

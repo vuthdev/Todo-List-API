@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -33,8 +32,7 @@ class AuthController(
             )
 
             if (authentication.isAuthenticated) {
-                val userDetails = authentication.principal as UserDetails
-                val jwt = jwtUtil.generateToken(userDetails)
+                val jwt = jwtUtil.generateToken(authentication)
                 return ResponseEntity.ok(AuthResponse(jwt))
             } else {
                 throw BadCredentialsException("Invalid credentials")

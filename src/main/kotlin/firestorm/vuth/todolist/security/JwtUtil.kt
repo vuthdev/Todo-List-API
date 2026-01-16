@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.util.Date
@@ -15,8 +17,9 @@ class JwtUtil(
     @Value("\${jwt.secret}") private val secret: String,
     @Value("\${jwt.expires_in}") private val expiresIn: Int,
 ) {
-    fun generateToken(userDetails: UserDetails): String {
+    fun generateToken(authentication: Authentication): String {
         val now = Date()
+        val userDetails =  authentication.principal as UserDetails
 
         return Jwts.builder()
             .claims()
@@ -28,6 +31,7 @@ class JwtUtil(
             .signWith(getKey())
             .compact()
     }
+
     fun validateToken(token: String): Boolean {
         return try {
             Jwts.parser()
